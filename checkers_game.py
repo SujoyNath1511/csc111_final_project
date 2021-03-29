@@ -137,7 +137,7 @@ class Player:
     This class will be used to create subclasses of different players
     """
 
-    def make_move(self, game: Checkers, position: str) -> tuple[str, str, str]:
+    def make_move(self, game: Checkers, previous_move: str, continuing_from_previous_move: bool) -> tuple[str, str, str]:
         """
         Make a move based on the given checkers game
         Preconditions:

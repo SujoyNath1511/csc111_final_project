@@ -110,6 +110,7 @@ class Checkers:
                 #   the piece on that position is captured and removed from the game
                 self.capture(move[1])
             self.white_pieces[move[2]] = piece
+            piece.position = move[2]
             self.white_pieces.pop(move[0])
         else:
             piece = self.black_pieces[move[0]]
@@ -117,6 +118,7 @@ class Checkers:
                 #   the piece on that position is captured and removed from the game
                 self.capture(move[1])
             self.black_pieces[move[2]] = piece
+            piece.position = move[2]
             self.black_pieces.pop(move[0])
 
     def capture(self, position: str) -> None:
@@ -129,7 +131,7 @@ class Checkers:
             self.white_pieces.pop(position)
 
 
-class player:
+class Player:
     """
     An abstract class representing a checkers player.
     This class will be used to create subclasses of different players

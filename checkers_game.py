@@ -129,6 +129,96 @@ class Checkers:
             self.black_pieces.pop(position)
         else:
             self.white_pieces.pop(position)
+    def get_neighbours(self, piece: Piece) -> list:
+        """Returns the pieces diagonal to the piece. The list contains tuples where the 
+        of length two. If it is impossible for a piece to be diagonal, the tuple is empty.
+        The first index in the tuple says 'none' if there is no piece, 'same' if the
+        piece is the same colour, diff if the piece is a different colour. The second index contains 
+        the position"""
+        position = piece.position
+        # Gets the coordinates of the corners
+        top_right = chr(ord(position[0]) + 1) + str(int(position[1]) + 1)
+        top_left = chr(ord(position[0]) - 1) + str(int(position[1]) + 1)
+        bottom_right = chr(ord(position[0]) + 1) + str(int(position[1]) - 1)
+        bottom_left = chr(ord(position[0]) - 1) + str(int(position[1]) - 1)
+        # Puts the corners in a list
+        corners = [top_right, top_left, bottom_right, bottom_left]
+        neighbours_so_far = []
+        for i in range(0, 4):
+            # Means that it is not on the game board
+            if corners[i] not in VALID_POSITIONS:
+                neighbours_so_far.append(())
+            # The space is not occupied
+            elif (corners[i] not in self.white_pieces and
+                  corners[i] not in self.black_pieces):
+                neighbours_so_far.append(('none', corners[i]))
+            # The space is occupied by a white piece
+            elif corners[i] in self.white_pieces:
+                if piece.white:
+                    neighbours_so_far.append(('same', corners[i]))
+                else:
+                    neighbours_so_far.append(('diff', corners[i]))
+            # The space is occupied by a black piece
+            elif corners[i] in self.black_pieces:
+                if piece.white:
+                    neighbours_so_far.append(('diff', corners[i]))
+                else:
+                    neighbours_so_far.append(('same', corners[i]))
+        return neighbours_so_far
+
+    def get_valid_moves(self) -> List[tuple]:
+        """Returns all the valid moves for a player."""
+        capture_moves = []
+        non_capture_moves = []
+        if self.is_white_move:
+            pieces_to_check = [self.white_pieces[piece] for piece in self.white_pieces]
+        else:
+            pieces_to_check = [self.black_pieces[piece] for piece in self.black_pieces]
+        for piece in pieces_to_check:
+            moves, is_capture = self.get_valid_move_piece(piece)
+            if is_capture:
+                capture_moves.extend(moves)
+            else:
+                non_capture_moves.extend(moves)
+        if capture_moves != []:
+            return capture_moves
+        else:
+            return non_capture_moves
+
+    def get_valid_move_piece(self, piece) -> Tuple[list, bool]:
+        """Returns all the valid moves for a piece"""
+        capture_moves = []
+        non_capture_moves = []
+        corners = self.get_neighbours(piece)
+        # Checks the bottom two corners to see find valid moves.
+        if piece.white and not piece.is_crowned:
+            start = 2
+            end = 4
+        # Checks the top to corners to see valid moves
+        elif not (piece.white or piece.is_crowned):
+            start = 0
+            end = 2
+        # Checks all diagonals
+        else:
+            start = 0
+            end = 4
+        for i in range(start, end):
+            corner = corners[i]
+            if corner == ():
+                continue
+            elif corner[0] == 'none':
+                non_capture_moves.append((piece.position, '', corner[1]))
+            elif corner[0] == 'diff':
+                letter = chr(ord(corner[1][0]) - ord(piece.position[0]) + ord(corner[1][0]))
+                num = str(int(corner[1][1]) - int(piece.position[1]) + int(corner[1][1]))
+                check = letter + num
+                if check not in self.white_pieces and check not in self.black_pieces and\
+                        check in VALID_POSITIONS:
+                    capture_moves.append((piece.position, corner[1], check))
+        if capture_moves != []:
+            return (capture_moves, True)
+        else:
+            return (non_capture_moves, False)
 
 
 class Player:

@@ -2,7 +2,7 @@
 This is a test file for the checkers game.
 """
 
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 
 START_POS_BLACK = {'a2', 'b1', 'c2', 'd1', 'e2', 'f1'}
 START_POS_WHITE = {'a6', 'b5', 'c6', 'd5', 'e6', 'f5'}

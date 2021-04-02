@@ -189,10 +189,12 @@ class Checkers:
             return non_capture_moves
 
     def get_valid_move_piece(self, piece) -> Tuple[list, bool]:
-        """Returns all the valid moves for a piece. The valid moves are stored as a tuple,
-        where the first index is the initial position, the second is empty if no capture is made
-        otherwise, it contains the position of the piece captured, and the third is the final
-        position"""
+        """Returns all the valid moves for a piece. The return is a tuple where the first index
+        contains a list of valid moves and the second is whether the returned list are capture
+        moves. Valid moves are stored as a tuple, where the first index of valid moves is the
+        initial position, the second is empty if no capture is made, otherwise, it contains the
+        position of the piece captured, and the third is the final position. The boolean in the
+        return tuple represents whether it was a capture move. """
         capture_moves = []
         non_capture_moves = []
         corners = self.get_neighbours(piece)

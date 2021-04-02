@@ -326,6 +326,7 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
     create_board(game_board, screen)
 
     while game_board.get_winner(move_count) is None:
+        time.sleep(1)
         if game_board.is_white_move:
             move, is_continued = white.make_move(game_board, previous_move, is_continued)
         else:
@@ -364,8 +365,13 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
         #     piece.crown_piece()
         #
         pygame.display.update()
-        time.sleep(1)
+        event = pygame.event.wait()
+        # if event.type == pygame.QUIT:
+        #     pygame.display.quit()
+    time.sleep(5)
+    pygame.display.quit()
     return (game_board.get_winner(move_count), moves_so_far)
+
 
 def draw_crown(move: tuple[str, str, str], screen: pygame.Surface, color: tuple[int, int, int]) -> None:
 
@@ -380,6 +386,7 @@ def draw_crown(move: tuple[str, str, str], screen: pygame.Surface, color: tuple[
               (left + 50, top + 70), (left + 30, top + 70), (left + 30, top + 50),
               (left + 10, top + 50), (left + 10, top + 30), (left + 30, top + 30)]
     pygame.draw.polygon(screen, color, points)
+
 
 def initialize_screen(screen_size: tuple[int, int], allowed: list) -> pygame.Surface:
     """Initialize pygame and the display window.
@@ -411,7 +418,7 @@ def create_board(game: Checkers, screen: pygame.Surface) -> None:
             pygame.draw.rect(screen, num_to_color(x, y), rect, width=0)
 
     # draws the borders
-    rect = pygame.Rect((OFFSET, OFFSET), (RECT_SIZE * DIMENSION, RECT_SIZE * DIMENSION))
+    rect = pygame.Rect((OFFSET-2, OFFSET-2), (RECT_SIZE * DIMENSION+4, RECT_SIZE * DIMENSION+4))
     pygame.draw.rect(screen, (0, 0, 0), rect, width=3)
 
     # draws the pieces:

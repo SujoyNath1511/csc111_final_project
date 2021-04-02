@@ -4,7 +4,13 @@ This is a test file for the checkers game.
 
 from typing import Dict, Optional, Tuple, List
 import random
+import pygame
+from pygame.colordict import THECOLORS
+import time
 
+DIMENSION = 6
+RECT_SIZE = 80
+OFFSET = 100
 START_POS_BLACK = {'a2', 'b1', 'c2', 'd1', 'e2', 'f1'}
 START_POS_WHITE = {'a6', 'b5', 'c6', 'd5', 'e6', 'f5'}
 VALID_POSITIONS = [letter + str(2 * x) for x in range(1, 4) for letter in 'ace'] + \
@@ -94,7 +100,7 @@ class Checkers:
         else:
             return None
 
-    def make_move(self, move: tuple[str, str, str]) -> None:
+    def make_move(self, move: tuple[str, str, str], screen) -> None:
         """
         Makes a move based on the tuple, move.
         The first element of the tuple is the initial position of the game piece
@@ -110,17 +116,59 @@ class Checkers:
             if move[1] != '':
                 #   the piece on that position is captured and removed from the game
                 self.capture(move[1])
+                # handles the pygame
+                y, x = pos_to_square(move[1])
+                rect = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE),
+                                   (RECT_SIZE, RECT_SIZE))
+                pygame.draw.rect(screen, (84, 84, 84), rect, width=0)
             self.white_pieces[move[2]] = piece
             piece.position = move[2]
             self.white_pieces.pop(move[0])
+
+            # handles the pygame
+            y, x = pos_to_square(move[0])
+            rect2 = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE),
+                                (RECT_SIZE, RECT_SIZE))
+            pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
+
+            # draws the piece again
+            if piece.is_crowned:
+                draw_crown(move, screen, (245, 245, 245))
+            else:
+                y, x = pos_to_square(move[2])
+                start = (
+                    OFFSET + RECT_SIZE // 2 + y * RECT_SIZE,
+                    OFFSET + RECT_SIZE // 2 + x * RECT_SIZE)
+                pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
+                pygame.draw.circle(screen, (245, 245, 245), start, 30, 0)
         else:
             piece = self.black_pieces[move[0]]
             if move[1] != '':
                 #   the piece on that position is captured and removed from the game
                 self.capture(move[1])
+                # handles the pygame
+                y, x = pos_to_square(move[1])
+                rect = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE),
+                                   (RECT_SIZE, RECT_SIZE))
+                pygame.draw.rect(screen, (84, 84, 84), rect, width=0)
             self.black_pieces[move[2]] = piece
             piece.position = move[2]
             self.black_pieces.pop(move[0])
+
+            # handles the pygame
+            y, x = pos_to_square(move[0])
+            rect2 = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE),
+                                (RECT_SIZE, RECT_SIZE))
+            pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
+
+            # draws the piece again
+            if piece.is_crowned:
+                draw_crown(move, screen, (50, 50, 50))
+            else:
+                y, x = pos_to_square(move[2])
+                start = (OFFSET + RECT_SIZE // 2 + y * RECT_SIZE, OFFSET + RECT_SIZE // 2 + x * RECT_SIZE)
+                pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
+                pygame.draw.circle(screen, (50, 50, 50), start, 30, 0)
 
     def capture(self, position: str) -> None:
         """
@@ -272,6 +320,11 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
     previous_move = ''
     move_count = 0
 
+    size = (800, 800)
+    allow = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]
+    screen = initialize_screen(size, allow)
+    create_board(game_board, screen)
+
     while game_board.get_winner(move_count) is None:
         if game_board.is_white_move:
             move, is_continued = white.make_move(game_board, previous_move, is_continued)
@@ -279,17 +332,20 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
             move, is_continued = black.make_move(game_board, previous_move, is_continued)
 
         # if game_board.get_valid_moves() != []: # We have to get rid of this if statement -Why are there no moves valid?
-        game_board.make_move(move)
+        game_board.make_move(move, screen)
 
     # alternate crowning
         if game_board.is_white_move:
             piece = game_board.white_pieces[move[2]]
-            if not piece.is_crowned and move[2][1] == 1:
+            if not piece.is_crowned and move[2][1] == '1':
                 piece.crown_piece()
+                draw_crown(move, screen, (245, 245, 245))
+
         else:
             piece = game_board.black_pieces[move[2]]
-            if not piece.is_crowned and move[2][1] == 6:
+            if not piece.is_crowned and move[2][1] == '6':
                 piece.crown_piece()
+                draw_crown(move, screen, (50, 50, 50))
 
         if is_continued is not True:
             # Change who is current player
@@ -307,8 +363,87 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
         #     piece = game_board.black_pieces[move[2][1]]
         #     piece.crown_piece()
         #
-
+        pygame.display.update()
+        time.sleep(1)
     return (game_board.get_winner(move_count), moves_so_far)
+
+def draw_crown(move: tuple[str, str, str], screen: pygame.Surface, color: tuple[int, int, int]) -> None:
+
+    y, x = pos_to_square(move[2])
+    rect2 = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE),
+                        (RECT_SIZE, RECT_SIZE))
+    pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
+    left = OFFSET + y * RECT_SIZE
+    top = OFFSET + x * RECT_SIZE
+    points = [(left + 30, top + 10), (left + 50, top + 10), (left + 50, top + 30),
+              (left + 70, top + 30), (left + 70, top + 50), (left + 50, top + 50),
+              (left + 50, top + 70), (left + 30, top + 70), (left + 30, top + 50),
+              (left + 10, top + 50), (left + 10, top + 30), (left + 30, top + 30)]
+    pygame.draw.polygon(screen, color, points)
+
+def initialize_screen(screen_size: tuple[int, int], allowed: list) -> pygame.Surface:
+    """Initialize pygame and the display window.
+
+    allowed is a list of pygame event types that should be listened for while pygame is running.
+    """
+    pygame.display.init()
+    pygame.font.init()
+    screen = pygame.display.set_mode(screen_size)
+    screen.fill(THECOLORS['white'])
+    pygame.display.flip()
+
+    # pygame.event.clear()
+    # pygame.event.set_blocked(None)
+    # pygame.event.set_allowed([pygame.QUIT] + allowed)
+
+    return screen
+
+
+def create_board(game: Checkers, screen: pygame.Surface) -> None:
+    """
+    creates board
+    """
+
+    # draws the squares
+    for x in range(0, DIMENSION):
+        for y in range(0, DIMENSION):
+            rect = pygame.Rect((OFFSET + y * RECT_SIZE, OFFSET + x * RECT_SIZE), (RECT_SIZE, RECT_SIZE))
+            pygame.draw.rect(screen, num_to_color(x, y), rect, width=0)
+
+    # draws the borders
+    rect = pygame.Rect((OFFSET, OFFSET), (RECT_SIZE * DIMENSION, RECT_SIZE * DIMENSION))
+    pygame.draw.rect(screen, (0, 0, 0), rect, width=3)
+
+    # draws the pieces:
+    for piece in game.black_pieces.keys():
+        s = pos_to_square(piece)
+        start = (OFFSET + RECT_SIZE // 2 + s[0] * RECT_SIZE, OFFSET + RECT_SIZE // 2 + s[1] * RECT_SIZE)
+        pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
+        pygame.draw.circle(screen, (50, 50, 50), start, 30, 0)
+
+    for piece in game.white_pieces.keys():
+        s = pos_to_square(piece)
+        start = (OFFSET + RECT_SIZE // 2 + s[0] * RECT_SIZE, OFFSET + RECT_SIZE // 2 + s[1] * RECT_SIZE)
+        pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
+        pygame.draw.circle(screen, (245, 245, 245), start, 30, 0)
+
+
+    pygame.display.flip()
+    pygame.event.wait()
+    # pygame.display.quit()
+
+def pos_to_square(pos: str) -> tuple:
+    """
+    posiiton to tuple
+    """
+    return ((ord(pos[0]) - 97), int(pos[1]) - 1)
+
+
+def num_to_color(x: int, y: int) -> tuple:
+    if (x + y) % 2 == 0:
+        return (255, 255, 255)
+    else:
+        return (84, 84, 84)
 
 
 if __name__ == '__main__':

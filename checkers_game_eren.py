@@ -242,12 +242,10 @@ class Checkers:
 
 
     def get_valid_move_piece(self, piece) -> Tuple[list, bool]:
-        """Returns all the valid moves for a piece. The return is a tuple where the first index 
-        contains a list of valid moves and the second is whether the returned list are capture 
-        moves. Valid moves are stored as a tuple, where the first index of valid moves is the 
-        initial position, the second is empty if no capture is made, otherwise, it contains the 
-        position of the piece captured, and the third is the final position. The boolean in the 
-        return tuple represents whether it was a capture move. """
+        """Returns all the valid moves for a piece. The valid moves are stored as a tuple,
+        where the first index is the initial position, the second is empty if no capture is made
+        otherwise, it contains the position of the piece captured, and the third is the final
+        position"""
         capture_moves = []
         non_capture_moves = []
         corners = self.get_neighbours(piece)
@@ -334,7 +332,6 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
         else:
             move, is_continued = black.make_move(game_board, previous_move, is_continued)
 
-        # if game_board.get_valid_moves() != []: # We have to get rid of this if statement -Why are there no moves valid?
         game_board.make_move(move, screen)
 
     # alternate crowning
@@ -353,19 +350,11 @@ def run_game(white: Player, black: Player) -> tuple[str, list]:
         if is_continued is not True:
             # Change who is current player
             game_board.is_white_move = not game_board.is_white_move
-            moves_so_far.append(move)
-            previous_move = move
             move_count += 1
 
-        # does the crowning- what we have talked
-        # if game_board.is_white_move and move[2][1] == 1:
-        #     piece = game_board.white_pieces[move[2][1]]
-        #     piece.crown_piece()
-        # elif not game_board.is_white_move and move[2][1] == 6:
-        #     # (also assuming that the piece is not already crowned)
-        #     piece = game_board.black_pieces[move[2][1]]
-        #     piece.crown_piece()
-        #
+        moves_so_far.append(move)
+        previous_move = move
+
         pygame.display.update()
         event = pygame.event.wait()
         # if event.type == pygame.QUIT:
@@ -454,8 +443,148 @@ def num_to_color(x: int, y: int) -> tuple:
     else:
         return (84, 84, 84)
 
+def draw_choose_players(screen: pygame.Surface) -> None:
+
+    player_types = ['Random Player']
+
+    rect_height = 70
+    rect_width = 150
+
+    screen.fill((23, 153, 195))
+    rect1 = pygame.Rect((OFFSET, OFFSET), (rect_width, rect_height))
+    pygame.draw.rect(screen, (93, 73, 83), rect1, width=0)
+    draw_text(screen, ' Player1', (OFFSET, OFFSET + rect_height // 3))
+    rect1 = pygame.Rect((OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
+    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
+
+    rect2 = pygame.Rect((3 * OFFSET, OFFSET), (rect_width, rect_height))
+    pygame.draw.rect(screen, (93, 73, 83), rect2, width=0)
+    draw_text(screen, ' Player2', (3 * OFFSET, OFFSET + rect_height // 3))
+    rect1 = pygame.Rect((3 * OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
+    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
+
+    rect3 = pygame.Rect((5 * OFFSET, OFFSET), (rect_width, rect_height))
+    pygame.draw.rect(screen, (148, 126, 193), rect3, width=0)
+    draw_text(screen, ' Start the Game', (5 * OFFSET, OFFSET + rect_height // 3))
+    rect1 = pygame.Rect((5 * OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
+    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
+
+
+    for x in range(0, len(player_types)):
+        rect = pygame.Rect((OFFSET, OFFSET + (x + 1) * rect_height), (rect_width, rect_height))
+        pygame.draw.rect(screen, (224, 81, 42), rect, width=0)
+        draw_text(screen, ' ' + player_types[x], (OFFSET, OFFSET + (x + 1) * rect_height + rect_height // 3))
+
+        #draw the edges
+        rect = pygame.Rect((OFFSET, OFFSET + (x + 1) * rect_height), (rect_width+1, rect_height+1))
+        pygame.draw.rect(screen, (0, 0, 0), rect, width=1)
+
+    for x in range(0, len(player_types)):
+        rect = pygame.Rect((3 * OFFSET, OFFSET + (x + 1) * rect_height), (rect_width, rect_height))
+        pygame.draw.rect(screen, (155, 73, 83), rect, width=0)
+        draw_text(screen, ' ' + player_types[x], (3 * OFFSET, OFFSET + (x + 1) * rect_height + rect_height // 3))
+
+        # draw the edges
+        rect = pygame.Rect((3 * OFFSET, OFFSET + (x + 1) * rect_height), (rect_width+1, rect_height+1))
+        pygame.draw.rect(screen, (0, 0, 0), rect, width=1)
+
+def choose_players() -> tuple[Player, Player]:
+
+    player1 = None
+    player2 = None
+    player1_st = ('', '', '')
+    player2_st = ('', '', '')
+    rect_height = 70
+    rect_width = 150
+    player_types = ['Random Player']
+    player_dict = {'Random Player': RandomPlayer()}
+    size = (800, 800)
+
+    allow = [pygame.MOUSEBUTTONDOWN]
+    screen = initialize_screen(size, allow)
+    draw_choose_players(screen)
+
+
+    while True:
+        draw_choose_players(screen)
+        green_box(player1_st, player2_st, screen)
+        pygame.display.update()
+        event = pygame.event.wait()
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            green = position_to_index(event.pos)
+            print(green)
+            if green is not None:
+                if green[0] == 3 and player2 is None:
+                    player2 = player_dict[player_types[green[1]]]
+                    player2_st = (player_types[green[1]], green[0], green[1])
+                elif green[0] == 1 and player1 is None:
+                    player1 = player_dict[player_types[green[1]]]
+                    player1_st = (player_types[green[1]], green[0], green[1])
+            else:
+                if 5 * OFFSET <= event.pos[0] <= 5 * OFFSET + rect_width and OFFSET <= event.pos[1] \
+                        <= OFFSET + rect_height:
+                    # start the game
+                    if player1 is None or player2 is None:
+                        rect3 = pygame.Rect((5 * OFFSET, OFFSET), (rect_height, rect_width))
+                        pygame.draw.rect(screen, (255, 0, 0), rect3, width=0)
+                        draw_text(screen, ' Start the Game', (5 * OFFSET, OFFSET))
+                    else:
+                        return (player1, player2)
+
+        elif event.type == pygame.QUIT:
+            break
+        pygame.display.update()
+
+
+def green_box(p1: tuple, p2: tuple, screen: pygame.Surface) -> None:
+    rect_height = 70
+    rect_width = 150
+
+    if p1[2] != '':
+        rect = pygame.Rect((p1[1] * OFFSET, OFFSET + (p1[2] + 1) * rect_height),
+                           (rect_width, rect_height))
+        pygame.draw.rect(screen, (0, 255, 0), rect, width=0)
+        draw_text(screen, ' ' + p1[0], (p1[1] * OFFSET, OFFSET + (p1[2] + 1) * rect_height + rect_height // 3))
+        pygame.display.update()
+    if p2[2] != '':
+        rect = pygame.Rect((p2[1] * OFFSET, OFFSET + (p2[2] + 1) * rect_height),
+                           (rect_width, rect_height))
+        pygame.draw.rect(screen, (0, 255, 0), rect, width=0)
+        draw_text(screen, ' ' + p2[0], (p2[1] * OFFSET, OFFSET + rect_height // 3 + (p2[2] + 1) * rect_height))
+        pygame.display.update()
+
+
+def position_to_index(pos: tuple[int, int]) -> Optional[tuple[int, int]]:
+    player_types = ['Random Player']
+    rect_height = 70
+    rect_width = 150
+
+    if OFFSET + rect_height <= pos[1] <= (len(player_types) + 1) * rect_height + OFFSET and OFFSET <= pos[0] <= OFFSET + rect_width:
+        i = (pos[1] - OFFSET - rect_height) // rect_height
+        return (1, i)
+    elif OFFSET + rect_height <= pos[1] <= (len(player_types) + 1) * rect_height + OFFSET and 3 * OFFSET <= pos[0] <= 3 * OFFSET + rect_width:
+        i = (pos[1] - OFFSET - rect_height) // rect_height
+        return (3, i)
+    else:
+        return None
+
+def draw_text(screen: pygame.Surface, text: str, pos: tuple[int, int]) -> None:
+    """Draw the given text to the pygame screen at the given position.
+
+    pos represents the *upper-left corner* of the text.
+    """
+    font = pygame.font.SysFont('inconsolata', 26)
+    text_surface = font.render(text, True, THECOLORS['black'])
+    width, height = text_surface.get_size()
+    screen.blit(text_surface,
+                pygame.Rect(pos, (pos[0] + width, pos[1] + height)))
+
+
 
 if __name__ == '__main__':
-    game = run_game(RandomPlayer(), RandomPlayer())
+
+    player1, player2 = choose_players()
+    game = run_game(player1, player2)
     print('The winner:' + game[0])
     print(game[1])

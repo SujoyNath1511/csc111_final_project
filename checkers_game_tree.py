@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Optional
 
 # May be subject to change later
-import checkers_game_with_pygame as checkers
+import checkers_game_with_pygame_v2 as checkers
 
 START_MOVE = ('', '', '')
 STARTING_PLAYER = True

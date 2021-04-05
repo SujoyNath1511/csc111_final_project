@@ -219,11 +219,11 @@ def exploring_player_runner(n: int):
     black_player = ExploringPlayer(game_tree)
     for _ in range(0, n):
         move_sequence = run_game(white_player, black_player)[1]
-        print(move_sequence)
         game_tree.insert_move_sequence(move_sequence, 0)
         all_move_sequences.append(move_sequence)
         white_player.game_tree = game_tree
         black_player.game_tree = game_tree
+    return all_moves_sequences
 
 
 if __name__ == '__main__':

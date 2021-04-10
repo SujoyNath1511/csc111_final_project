@@ -337,21 +337,6 @@ class Player:
         raise NotImplementedError
 
 
-class RandomPlayer(Player):
-    """
-    Just a random player
-    """
-
-    def make_move(self, game: Checkers, previous_move: tuple[str, str, str],
-                  continuing_from_previous_move: bool) \
-            -> tuple[str, str, str]:
-        """
-        makes a random move from valid moves
-        """
-        moves = game.get_valid_moves()
-        return random.choice(moves)
-
-
 def run_game(white: Player, black: Player) -> tuple[str, list[tuple[bool, tuple[str, str, str]]]]:
     """
     Runs the checkers game and returns a tuple.

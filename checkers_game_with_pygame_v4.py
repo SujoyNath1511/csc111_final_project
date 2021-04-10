@@ -539,6 +539,8 @@ if __name__ == '__main__':
     # game = run_game_pygame(RandomPlayer(), RandomPlayer())
     # print('The winner:' + game[0])
     # print(game[1])
-    game = run_game(RandomPlayer(), RandomPlayer())
-    print('The winner:' + game[0])
-    print(game[1])
+    # game = run_game(RandomPlayer(), RandomPlayer())
+    # print('The winner:' + game[0])
+    # print(game[1])
+    import doctest
+    doctest.testmod()

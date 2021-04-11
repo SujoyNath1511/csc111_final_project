@@ -1,8 +1,10 @@
 """
 CSC111 Winter 2021 Final Project: Building A Checkers AI Player
+
 This Python module contains the game tree class that the Aggressive AI and Defensive AI will
 use. It also contains the functions that allow for reading and writing to a CSV file (game tree
 building purposes) and an Exploring Player AI that also builds the game tree.
+
 Copyright and Usage Information:
 ======================================
 This file is provided solely for the use of the CSC111 Teaching team and for the
@@ -399,3 +401,5 @@ if __name__ == '__main__':
         'max-line-length': 100,
         'disable': ['E1136']
     })
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()

@@ -4,8 +4,8 @@ import pygame
 from pygame.colordict import THECOLORS
 import time
 
-from AI_players_v2 import AggressivePlayer, RandomPlayer, DefensivePlayer
-import checkers_game_tree_v5 as checkers_game_tree
+from ai_players_final import AggressivePlayer, RandomPlayer, DefensivePlayer
+import checkers_game_tree_final as checkers_game_tree
 import checkers_game_with_pygame_v5 as checkers_pygame
 
 DIMENSION = 6

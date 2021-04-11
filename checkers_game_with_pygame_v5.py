@@ -19,11 +19,9 @@ import random
 import pygame
 from pygame.colordict import THECOLORS
 import time
-# from AI_players_v2 import AggressivePlayer, RandomPlayer, DefensivePlayer
-# from checkers_game_tree_v3 import ExploringPlayer, CheckersGameTree
 
 DIMENSION = 6
-RECT_SIZE = 80
+RECT_SIZE = 100
 OFFSET = 100
 START_POS_BLACK = {'a2', 'b1', 'c2', 'd1', 'e2', 'f1'}
 START_POS_WHITE = {'a6', 'b5', 'c6', 'd5', 'e6', 'f5'}
@@ -224,11 +222,11 @@ class Checkers:
         else:
             self.white_pieces.pop(position)
 
-    def get_neighbours(self, piece: Piece) -> List[tuple]:
-        """Returns the pieces diagonal to piece. The list contains tuples of length two if it is a
-        space on the board. If it is impossible for a piece to be diagonal, the tuple is empty.
-        The first index in the tuple says 'none' if there is no piece, 'same' if the piece is the
-        same colour, diff if the piece is a different colour. The second index contains
+    def get_neighbours(self, piece: Piece) -> list:
+        """Returns the pieces diagonal to the piece. The list contains tuples where the
+        of length two. If it is impossible for a piece to be diagonal, the tuple is empty.
+        The first index in the tuple says 'none' if there is no piece, 'same' if the
+        piece is the same colour, diff if the piece is a different colour. The second index contains
         the position"""
         position = piece.position
         # Gets the coordinates of the corners
@@ -260,12 +258,13 @@ class Checkers:
                 else:
                     neighbours_so_far.append(('same', corners[i]))
         return neighbours_so_far
-    
-    def get_valid_moves(self) -> List[Tuple[str, str, str]]:
+
+    def get_valid_moves(self) -> List[tuple]:
         """Returns all the valid moves for a player. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
-        position"""
+        position
+        """
 
         capture_moves = []
         non_capture_moves = []
@@ -284,9 +283,8 @@ class Checkers:
         else:
             return non_capture_moves
 
-    def get_valid_move_piece(self, piece) -> Tuple[List[Tuple[str, str, str]], bool]:
-        """Returns a tuple where the first index is a list of all the valid moves for a piece and
-        the second index is whether they are capture moves. The valid moves are stored as a tuple,
+    def get_valid_move_piece(self, piece) -> Tuple[list, bool]:
+        """Returns all the valid moves for a piece. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
         position"""
@@ -415,12 +413,15 @@ def run_game_pygame(white: Player, black: Player) -> tuple[str, list]:
     move_count = 0
 
     size = (800, 800)
-    allow = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]
+    allow = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]
     screen = initialize_screen(size, allow)
     create_board(game_board, screen)
 
     while game_board.get_winner(move_count) is None:
-        time.sleep(1)
+        moves_left(MOVE_LIMIT - move_count - 1, screen)
+        if not (game_board.is_white_move and isinstance(white, HumanPlayer)) and not (
+                not game_board.is_white_move and isinstance(black, HumanPlayer)):
+            time.sleep(1)
         if game_board.is_white_move:
             move = white.make_move(game_board, previous_move, is_continued)
         else:
@@ -478,10 +479,14 @@ def draw_crown(move: tuple[str, str, str], screen: pygame.Surface,
     pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
     left = OFFSET + y * RECT_SIZE
     top = OFFSET + x * RECT_SIZE
-    points = [(left + 30, top + 10), (left + 50, top + 10), (left + 50, top + 30),
-              (left + 70, top + 30), (left + 70, top + 50), (left + 50, top + 50),
-              (left + 50, top + 70), (left + 30, top + 70), (left + 30, top + 50),
-              (left + 10, top + 50), (left + 10, top + 30), (left + 30, top + 30)]
+    # points = [(left + 30, top + 10), (left + 50, top + 10), (left + 50, top + 30),
+    #           (left + 70, top + 30), (left + 70, top + 50), (left + 50, top + 50),
+    #           (left + 50, top + 70), (left + 30, top + 70), (left + 30, top + 50),
+    #           (left + 10, top + 50), (left + 10, top + 30), (left + 30, top + 30)]
+    points = [(left + 35, top + 10), (left + 60, top + 10), (left + 60, top + 35),
+              (left + 85, top + 35), (left + 85, top + 60), (left + 60, top + 60),
+              (left + 60, top + 85), (left + 35, top + 85), (left + 35, top + 60),
+              (left + 10, top + 60), (left + 10, top + 35), (left + 35, top + 35)]
     pygame.draw.polygon(screen, color, points)
 
 
@@ -501,6 +506,25 @@ def initialize_screen(screen_size: tuple[int, int], allowed: list) -> pygame.Sur
 
     return screen
 
+def moves_left(count, screen: pygame.Surface) -> None:
+    rect = pygame.Rect(100, 0, 400, 90)
+    pygame.draw.rect(screen, (255, 255, 255), rect, width=0)
+
+    text = str(count) + ' moves left'
+    pos = (300, 50)
+
+    draw_text(screen, text, pos, 30)
+
+def draw_text(screen: pygame.Surface, text: str, pos: tuple[int, int], size: int) -> None:
+    """Draw the given text to the pygame screen at the given position.
+
+    pos represents the *upper-left corner* of the text.
+    """
+    font = pygame.font.SysFont('inconsolata', size)
+    text_surface = font.render(text, True, THECOLORS['black'])
+    width, height = text_surface.get_size()
+    screen.blit(text_surface,
+                pygame.Rect(pos, (pos[0] + width, pos[1] + height)))
 
 def create_board(game: Checkers, screen: pygame.Surface) -> None:
     """
@@ -524,15 +548,15 @@ def create_board(game: Checkers, screen: pygame.Surface) -> None:
         s = pos_to_square(piece)
         start = (
             OFFSET + RECT_SIZE // 2 + s[0] * RECT_SIZE, OFFSET + RECT_SIZE // 2 + s[1] * RECT_SIZE)
-        pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
-        pygame.draw.circle(screen, (50, 50, 50), start, 30, 0)
+        pygame.draw.circle(screen, (0, 0, 0), start, 34, 1)
+        pygame.draw.circle(screen, (50, 50, 50), start, 33, 0)
 
     for piece in game.white_pieces.keys():
         s = pos_to_square(piece)
         start = (
             OFFSET + RECT_SIZE // 2 + s[0] * RECT_SIZE, OFFSET + RECT_SIZE // 2 + s[1] * RECT_SIZE)
-        pygame.draw.circle(screen, (0, 0, 0), start, 31, 1)
-        pygame.draw.circle(screen, (245, 245, 245), start, 30, 0)
+        pygame.draw.circle(screen, (0, 0, 0), start, 34, 1)
+        pygame.draw.circle(screen, (245, 245, 245), start, 33, 0)
 
     pygame.display.flip()
     pygame.event.wait()
@@ -551,10 +575,10 @@ def square_to_pos(pos: tuple[int, int]) -> str:
     posiiton to tuple
     """
 
-    x = (pos[0] - OFFSET) // RECT_SIZE
-    y = (pos[1] - OFFSET) // RECT_SIZE
+    x = ((pos[0] - OFFSET) // RECT_SIZE) + 1
+    y = ((pos[1] - OFFSET) // RECT_SIZE) + 1
 
-    if pos[0] >= OFFSET and  pos[1] >= OFFSET and x <= 8 and y <= 8:
+    if pos[0] >= OFFSET and pos[1] >= OFFSET and x <= 6 and y <= 6:
         return chr(96 + x) + str(y)
     else:
         return ''
@@ -609,10 +633,10 @@ class HumanPlayer(Player):
     clicked: str
     released: str
 
-    def __init__(self):
-        self._clicking: False
-        self.clicked: ''
-        self.released: ''
+    def __init__(self) -> None:
+        self._clicking = False
+        self.clicked = ''
+        self.released = ''
 
     # def __init__(self, clicking = False, clicked= '', relased= ''):
     #     self._clicking: clicking
@@ -625,30 +649,38 @@ class HumanPlayer(Player):
         while True:
             event = pygame.event.wait()
 
-            if game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
-                    event.pos) in game.white_pieces.keys():
+            if (game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
+                    event.pos) in game.white_pieces.keys()) or (
+                    not game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
+                        event.pos) in game.black_pieces.keys()):
                 self.clicked = square_to_pos(event.pos)
                 self._clicking = True
-            elif not game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
-                    event.pos) in game.black_pieces.keys():
-                self.clicked = square_to_pos(event.pos)
-                self._clicking = True
+                print(square_to_pos(event.pos))
+
+            # elif not game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
+            #         event.pos) in game.black_pieces.keys():
+            #     self.clicked = square_to_pos(event.pos)
+            #     self._clicking = True
+            #     print(square_to_pos(event.pos))
 
             event = pygame.event.wait()
 
             if event.type == pygame.MOUSEBUTTONUP and self.clicked != '':
                 self._clicking = False
                 self.released = square_to_pos(event.pos)
+                if self.released != '':
+                    other_piece = find_pieces_between(self.clicked, self.released, game)
+                    move = (self.clicked, other_piece, self.released)
 
-            other_piece = find_pieces_between(self.clicked, self.released, game)
-            move = (self.clicked, other_piece, self.released)
+                    print(square_to_pos(event.pos))
+                    print(move)
 
-            if move in game.get_valid_moves():
-                return move
-            else:
-                self._clicking: False
-                self.clicked: ''
-                self.released: ''
+                    if move in game.get_valid_moves():
+                        return move
+                    else:
+                        self._clicking: False
+                        self.clicked: ''
+                        self.released: ''
 
 # if __name__ == '__main__':
     # game = run_game_pygame(RandomPlayer(), RandomPlayer())

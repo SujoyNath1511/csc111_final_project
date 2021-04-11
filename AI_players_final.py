@@ -206,6 +206,36 @@ def helper_random_player(game: checkers_game.Checkers,
     return move
 
 
+def print_ai_statistics() -> None:
+    """Calculates the AI win rates and prints these statistics in the Python Console."""
+    list_of_games = gametree.read_moves_from_csv('game_tree_data.csv')
+    game_tree = gametree.build_game_tree_from_list(list_of_games)
+
+    # Statistics for Aggressive AI:
+    win_rates_aggro = []
+    for i in range(0, 10):
+        stats = {'white': 0, 'black': 0, 'draw': 0}
+        for j in range(0, 1000):
+            white = AggressivePlayer(game_tree)
+            black = RandomPlayer()
+            stats[checkers_game.run_game(white, black)[0]] += 1
+        win_rates_aggro.append(stats['white'] > stats['black'])
+
+    print(win_rates_aggro)
+
+    # Statistics for Defensive AI:
+    win_rates_defen = []
+    for i in range(0, 10):
+        stats = {'white': 0, 'black': 0, 'draw': 0}
+        for j in range(0, 1000):
+            white = DefensivePlayer(game_tree)
+            black = RandomPlayer()
+            stats[checkers_game.run_game(white, black)[0]] += 1
+        win_rates_defen.append(stats['white'] > stats['black'])
+
+    print(win_rates_defen)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
@@ -213,7 +243,7 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'extra-imports': ["__future__", "typing", "random",
                           "checkers_game_with_pygame_v3", "checkers_game_tree_v2"],
-        'allowed-io': [],
+        'allowed-io': ['print_ai_statistics'],
         'max-nested-blocks': 5,
         'max-line-length': 100,
         'disable': ['E1136']

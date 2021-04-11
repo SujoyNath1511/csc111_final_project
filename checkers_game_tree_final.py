@@ -258,7 +258,8 @@ def write_moves_to_csv(filename: str,
                        list_of_games: list[list[tuple[bool, tuple[str, str, str]]]]) -> None:
     """This function takes in a csv file and list of lists, where each sublist represents
     the moves made in a single game, and writes this list of lists into the csv file.
-    Precondition:
+
+    Preconditions:
         - filename is a valid file path to a file that exists
         - list_of_games != []
         - all(moves != [] for moves in list_of_games)
@@ -277,7 +278,11 @@ def write_moves_to_csv(filename: str,
 
 def read_moves_from_csv(filename: str) -> list[list[tuple[bool, tuple[str, str, str]]]]:
     """Returns a list of lists, where each sublist represents the moves made
-    in a single game, read from a csv file with the path filename"""
+    in a single game, read from a csv file with the path filename.
+
+    Preconditions:
+        - filename is a valid file path
+    """
 
     list_of_games = []
 
@@ -296,7 +301,14 @@ def read_moves_from_csv(filename: str) -> list[list[tuple[bool, tuple[str, str, 
 
 
 def move_to_str(move: tuple[str, str, str]) -> str:
-    """Takes in a move and converts it to a string"""
+    """Takes in a move and converts it to a string.
+
+    >>> move_to_str(('a4', '', 'b3'))
+    'a4  b3'
+
+    >>> move_to_str(('a4', 'b5', 'c6'))
+    'a4b5c6'
+    """
     if move[1] == '':
         capture = '  '
     else:
@@ -306,7 +318,20 @@ def move_to_str(move: tuple[str, str, str]) -> str:
 
 
 def str_to_move(str_move: str) -> tuple[str, str, str]:
-    """Takes in a string and converts into a move."""
+    """Takes in a string and converts into a move. The move format
+    is based on how move was defined in the Checkers class and
+    CheckersGameTree class.
+
+    Precondtions:
+        - str_move is properly formatted.
+        - len(str_move) == 6
+
+    >>> str_to_move('a4  b3')
+    ('a4', '', 'b3')
+
+    >>> str_to_move('a4b5c6')
+    ('a4', 'b5', 'c6')
+    """
     if str_move[2: 4] == '  ':
         capture = ''
     else:
@@ -319,7 +344,8 @@ def build_game_tree_from_list(list_of_games: list[list[tuple[bool, tuple[str, st
         CheckersGameTree:
     """Returns a built up game tree using the move sequences in list_of_games. list_of_games
     is a list of lists, where each sublist is the move sequence from a single game.
-    Precondition:
+
+    Preconditions:
         - list_of_games != []
         - all(moves != [] for moves in list_of_games)
         - The move sequences in list_of_games are all the moves in a single game, from start to

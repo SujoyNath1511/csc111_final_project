@@ -32,7 +32,7 @@ VALID_POSITIONS = [letter + str(2 * x) for x in range(1, 4) for letter in 'ace']
 PLAYER_COLORS = ('white', 'black')
 
 MOVE_LIMIT = 35
-PLAYER_TYPES = ['Random Player', 'Aggressive Player', 'Defensive Player']
+PLAYER_TYPES = ['Random Player', 'Aggressive Player', 'Defensive Player', 'Human Player']
 
 
 class Piece:
@@ -567,120 +567,6 @@ def num_to_color(x: int, y: int) -> tuple:
         return (84, 84, 84)
 
 
-def draw_choose_players(screen: pygame.Surface) -> None:
-
-    rect_height = 70
-    rect_width = 150
-
-    screen.fill((23, 153, 195))
-    rect1 = pygame.Rect((OFFSET, OFFSET), (rect_width, rect_height))
-    pygame.draw.rect(screen, (93, 73, 83), rect1, width=0)
-    draw_text(screen, ' Player1', (OFFSET, OFFSET + rect_height // 3))
-    rect1 = pygame.Rect((OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
-    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
-
-    rect2 = pygame.Rect((3 * OFFSET, OFFSET), (rect_width, rect_height))
-    pygame.draw.rect(screen, (93, 73, 83), rect2, width=0)
-    draw_text(screen, ' Player2', (3 * OFFSET, OFFSET + rect_height // 3))
-    rect1 = pygame.Rect((3 * OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
-    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
-
-    rect3 = pygame.Rect((5 * OFFSET, OFFSET), (rect_width, rect_height))
-    pygame.draw.rect(screen, (148, 126, 193), rect3, width=0)
-    draw_text(screen, ' Start the Game', (5 * OFFSET, OFFSET + rect_height // 3))
-    rect1 = pygame.Rect((5 * OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
-    pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
-
-    for x in range(0, len(PLAYER_TYPES)):
-        rect = pygame.Rect((OFFSET, OFFSET + (x + 1) * rect_height), (rect_width, rect_height))
-        pygame.draw.rect(screen, (224, 81, 42), rect, width=0)
-        draw_text(screen, ' ' + PLAYER_TYPES[x],
-                  (OFFSET, OFFSET + (x + 1) * rect_height + rect_height // 3))
-
-        # draw the edges
-        rect = pygame.Rect((OFFSET, OFFSET + (x + 1) * rect_height),
-                           (rect_width + 1, rect_height + 1))
-        pygame.draw.rect(screen, (0, 0, 0), rect, width=1)
-
-    for x in range(0, len(PLAYER_TYPES)):
-        rect = pygame.Rect((3 * OFFSET, OFFSET + (x + 1) * rect_height), (rect_width, rect_height))
-        pygame.draw.rect(screen, (155, 73, 83), rect, width=0)
-        draw_text(screen, ' ' + PLAYER_TYPES[x],
-                  (3 * OFFSET, OFFSET + (x + 1) * rect_height + rect_height // 3))
-
-        # draw the edges
-        rect = pygame.Rect((3 * OFFSET, OFFSET + (x + 1) * rect_height),
-                           (rect_width + 1, rect_height + 1))
-        pygame.draw.rect(screen, (0, 0, 0), rect, width=1)
-
-
-def choose_players() -> tuple[Player, Player]:
-    player1 = None
-    player2 = None
-    player1_st = ('', '', '')
-    player2_st = ('', '', '')
-    rect_height = 70
-    rect_width = 150
-    player_dict = {'Random Player': RandomPlayer(), 'Aggressive Player': AggressivePlayer(),
-                   'Exploring Player': ExploringPlayer(), 'Defensive Player': DefensivePlayer()}
-    size = (800, 800)
-
-    allow = [pygame.MOUSEBUTTONDOWN]
-    screen = initialize_screen(size, allow)
-    draw_choose_players(screen)
-
-    while True:
-        draw_choose_players(screen)
-        green_box(player1_st, player2_st, screen)
-        pygame.display.update()
-        event = pygame.event.wait()
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            green = position_to_index(event.pos)
-            print(green)
-            if green is not None:
-                if green[0] == 3 and player2 is None:
-                    player2 = player_dict[PLAYER_TYPES[green[1]]]
-                    player2_st = (PLAYER_TYPES[green[1]], green[0], green[1])
-                elif green[0] == 1 and player1 is None:
-                    player1 = player_dict[PLAYER_TYPES[green[1]]]
-                    player1_st = (PLAYER_TYPES[green[1]], green[0], green[1])
-            else:
-                if 5 * OFFSET <= event.pos[0] <= 5 * OFFSET + rect_width and OFFSET <= event.pos[1] \
-                        <= OFFSET + rect_height:
-                    # start the game
-                    if player1 is None or player2 is None:
-                        rect3 = pygame.Rect((5 * OFFSET, OFFSET), (rect_height, rect_width))
-                        pygame.draw.rect(screen, (255, 0, 0), rect3, width=0)
-                        draw_text(screen, ' Start the Game', (5 * OFFSET, OFFSET))
-                    else:
-                        return (player1, player2)
-
-        elif event.type == pygame.QUIT:
-            break
-        pygame.display.update()
-
-
-def green_box(p1: tuple, p2: tuple, screen: pygame.Surface) -> None:
-    rect_height = 70
-    rect_width = 150
-
-    if p1[2] != '':
-        rect = pygame.Rect((p1[1] * OFFSET, OFFSET + (p1[2] + 1) * rect_height),
-                           (rect_width, rect_height))
-        pygame.draw.rect(screen, (0, 255, 0), rect, width=0)
-        draw_text(screen, ' ' + p1[0],
-                  (p1[1] * OFFSET, OFFSET + (p1[2] + 1) * rect_height + rect_height // 3))
-        pygame.display.update()
-    if p2[2] != '':
-        rect = pygame.Rect((p2[1] * OFFSET, OFFSET + (p2[2] + 1) * rect_height),
-                           (rect_width, rect_height))
-        pygame.draw.rect(screen, (0, 255, 0), rect, width=0)
-        draw_text(screen, ' ' + p2[0],
-                  (p2[1] * OFFSET, OFFSET + rect_height // 3 + (p2[2] + 1) * rect_height))
-        pygame.display.update()
-
-
 def position_to_index(pos: tuple[int, int]) -> Optional[tuple[int, int]]:
     """
     Used when finding out which square the user clicked in choose_player window.
@@ -701,43 +587,75 @@ def position_to_index(pos: tuple[int, int]) -> Optional[tuple[int, int]]:
     else:
         return None
 
+def find_pieces_between(pos1: str, pos2: str, game: Checkers) -> str:
+    y = str((int(pos1[1]) + int(pos2[1])) // 2)
+    x = chr((ord(pos1[0]) + ord(pos2[0])) // 2)
 
-def draw_text(screen: pygame.Surface, text: str, pos: tuple[int, int]) -> None:
-    """Draw the given text to the pygame screen at the given position.
+    coordinate = x + y
 
-    pos represents the *upper-left corner* of the text.
-    """
-    font = pygame.font.SysFont('inconsolata', 26)
-    text_surface = font.render(text, True, THECOLORS['black'])
-    width, height = text_surface.get_size()
-    screen.blit(text_surface,
-                pygame.Rect(pos, (pos[0] + width, pos[1] + height)))
+    if game.is_white_move and coordinate in game.black_pieces.keys():
+        return coordinate
+    elif not game.is_white_move and coordinate in game.white_pieces.keys():
+        return coordinate
+    else:
+        return ''
 
 
-class HumanPlayer:
+class HumanPlayer(Player):
     """
     A player that is run by a human
     """
-    _clicking: True
+    _clicking: bool
+    clicked: str
+    released: str
 
-    def make_move(self, game: Checkers, event: pygame.event):
-        asdf
+    def __init__(self):
+        self._clicking: False
+        self.clicked: ''
+        self.released: ''
 
+    # def __init__(self, clicking = False, clicked= '', relased= ''):
+    #     self._clicking: clicking
+    #     self.clicked: clicked
+    #     self.released: relased
 
+    def make_move(self, game: Checkers, previous_move: tuple[str, str, str],
+                  continuing_from_previous_move: bool) -> tuple[str, str, str]:
 
+        while True:
+            event = pygame.event.wait()
 
+            if game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
+                    event.pos) in game.white_pieces.keys():
+                self.clicked = square_to_pos(event.pos)
+                self._clicking = True
+            elif not game.is_white_move and event.type == pygame.MOUSEBUTTONDOWN and square_to_pos(
+                    event.pos) in game.black_pieces.keys():
+                self.clicked = square_to_pos(event.pos)
+                self._clicking = True
 
+            event = pygame.event.wait()
 
+            if event.type == pygame.MOUSEBUTTONUP and self.clicked != '':
+                self._clicking = False
+                self.released = square_to_pos(event.pos)
 
+            other_piece = find_pieces_between(self.clicked, self.released, game)
+            move = (self.clicked, other_piece, self.released)
 
+            if move in game.get_valid_moves():
+                return move
+            else:
+                self._clicking: False
+                self.clicked: ''
+                self.released: ''
 
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # game = run_game_pygame(RandomPlayer(), RandomPlayer())
     # print('The winner:' + game[0])
     # print(game[1])
-    player1, player2 = choose_players()
-    game = run_game_pygame(player1, player2)
-    print('The winner:' + game[0])
-    print(game[1])
+    # player1, player2 = choose_players()
+    # game = run_game_pygame(player1, player2)
+    # print('The winner:' + game[0])
+    # print(game[1])
     # game = run_game_pygame(RandomPlayer(), RandomPlayer())

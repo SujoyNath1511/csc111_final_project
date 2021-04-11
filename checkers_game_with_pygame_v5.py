@@ -265,7 +265,7 @@ class Checkers:
         """Returns all the valid moves for a player. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
-        position
+        position"""
 
         capture_moves = []
         non_capture_moves = []

@@ -20,11 +20,7 @@ import checkers_game_with_pygame_v5 as checkers_game
 
 class AggressivePlayer(checkers_game.Player):
     """
-    A checkers AI player that is greedy, prioritizing the number of pieces its opponent loses
-
-    When the Aggressive AI player makes a move, it picks the subtree with highest pieces lost
-    by its opponent. If _game_tree is None or there are no subtrees for the move made by the previous player,
-    Then the AI picks a random move based on game.get_valid_moves() method.
+    A checkers AI player that is greedy and prioritizing the number of pieces its opponent loses
     """
     # Private Instance Attributes:
     #   - _game_tree:
@@ -94,12 +90,7 @@ class AggressivePlayer(checkers_game.Player):
 class DefensivePlayer(checkers_game.Player):
     """
     An AI player that is defensive. This player tries to preserve as many
-    pieces as possible and make its moves based on the number of pieces it will lose.
-
-    So if this player where to pick next move, it searches for the subtree with the
-    lowest number of pieces it will lose. If _game_tree is None or there are no subtrees for
-    the previous move made by the opponent, _game_tree is set to None and the AI player
-    will make a random move based on game.get_valid_moves() method.
+    pieces as possible and make its moves based on the number of pieces it will lose
     """
     # Private Instance Attribute
     #   - _game_tree:
@@ -168,18 +159,12 @@ class DefensivePlayer(checkers_game.Player):
 class RandomPlayer(checkers_game.Player):
     """
     A random player
-
-    This is a random player who makes random moves. It chooses one of the moves that
-    game.get_valid_moves() returns and it makes that move.
     """
 
     def make_move(self, game: checkers_game.Checkers, previous_move: tuple[str, str, str],
                   continuing_from_previous_move: bool) -> tuple[str, str, str]:
         """
-        The method that the RandomPlayer uses to make a move.
-
-        This method makes a move for the random player where it gets the valid moves from
-        game_get_valid_moves and pick a random move.
+        Makes move
         """
         #   Check whether if the player can can capture again
         if continuing_from_previous_move:
@@ -224,34 +209,53 @@ def helper_random_player(game: checkers_game.Checkers,
     return move
 
 
-def print_ai_statistics() -> None:
-    """Calculates the AI win rates and prints these statistics in the Python Console."""
-    list_of_games = gametree.read_moves_from_csv('game_tree_data.csv')
-    game_tree = gametree.build_game_tree_from_list(list_of_games)
+def print_ai_statistics(game_tree: gametree.CheckersGameTree) -> None:
+    """Calculates the AI win rates and prints these statistics in the Python Console.
+
+    The statistic being calculated is the percentage of games the Aggressive or Defensive
+    AI wins when playing against a random player out of 1000 games. This is run 10 times,
+    so there are 10 sets of 1000 games.
+    """
+    # Print a blank line for line spacing.
+    print('')
 
     # Statistics for Aggressive AI:
-    win_rates_aggro = []
-    for _ in range(0, 10):
+    for i in range(1, 6):
         stats = {'white': 0, 'black': 0, 'draw': 0}
         for _ in range(0, 1000):
             white = AggressivePlayer(game_tree)
             black = RandomPlayer()
             stats[checkers_game.run_game(white, black)[0]] += 1
-        win_rates_aggro.append(stats['white'] > stats['black'])
 
-    print(win_rates_aggro)
+        # Here, calculate the win percentage, but round it to two decimal places.
+        aggro_win_percentage = int((stats['white'] / 1000) * 10000) / 100
+        aggro_lose_percentage = int((stats['black'] / 1000) * 10000) / 100
+
+        # Print the statistics:
+        print(f'Aggressive Player Win rate for Set {i}: {aggro_win_percentage}')
+        print(f'Random Player Win rate for Set {i}: {aggro_lose_percentage}')
+        print('Aggressive Wins more than Random: ' + str(stats['white'] > stats['black']))
+        print('===============================================================')
+
+    # Print a blank line for line spacing.
+    print('')
 
     # Statistics for Defensive AI:
-    win_rates_defen = []
-    for _ in range(0, 10):
+    for j in range(1, 6):
         stats = {'white': 0, 'black': 0, 'draw': 0}
         for _ in range(0, 1000):
             white = DefensivePlayer(game_tree)
             black = RandomPlayer()
             stats[checkers_game.run_game(white, black)[0]] += 1
-        win_rates_defen.append(stats['white'] > stats['black'])
 
-    print(win_rates_defen)
+        defen_win_percentage = int((stats['white'] / 1000) * 10000) / 100
+        defen_lose_percentage = int((stats['black'] / 1000) * 10000) / 100
+
+        # Print the statistics:
+        print(f'Defensive Player Win rate for Set {j}: {defen_win_percentage}')
+        print(f'Random Player Win rate for Set {j}: {defen_lose_percentage}')
+        print('Defensive Wins more than Random: ' + str(stats['white'] > stats['black']))
+        print('===============================================================')
 
 
 if __name__ == '__main__':

@@ -1,9 +1,7 @@
 """
 CSC111 Winter 2021 Final Project: Building A Checkers AI Player
-
 This Python module contains the subclasses for the AI players and the random player. It also
 contains the function for getting the statistics of the AI players' performance.
-
 ======================================
 This file is provided solely for the use of the CSC111 Teaching team and for the
 use of people who made this file, Mohamed Abdullahi, Benjamin Lee, Eren Findik and Sujoy
@@ -22,8 +20,8 @@ class AggressivePlayer(checkers_game.Player):
     """
     A checkers AI player that is greedy, prioritizing the number of pieces its opponent loses
     When the Aggressive AI player makes a move, it picks the subtree with highest pieces lost
-    by its opponent. If _game_tree is None or there are no subtrees for the move made by the previous player,
-    Then the AI picks a random move based on game.get_valid_moves() method.
+    by its opponent. If _game_tree is None or there are no subtrees for the move made by the
+    previous player, then the AI picks a random move based on game.get_valid_moves() method.
     """
     # Private Instance Attributes:
     #   - _game_tree:
@@ -222,7 +220,6 @@ def helper_random_player(game: checkers_game.Checkers,
 
 def print_ai_statistics(game_tree: gametree.CheckersGameTree) -> None:
     """Calculates the AI win rates and prints these statistics in the Python Console.
-
     The statistic being calculated is the percentage of games the Aggressive or Defensive
     AI wins when playing against a random player out of 1000 games. This is run 10 times,
     so there are 10 sets of 1000 games.

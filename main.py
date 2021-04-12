@@ -12,11 +12,17 @@ permission of the aforementioned group.
 This file is Copyright (c) 2021 Sujoy Deb Nath, Benjamin Lee, Mohamed Abdullahi and Eren Findik.
 """
 import checkers_game_with_pygame_v5 as c_game
+import checkers_game_tree_final as gametree
 import ai_players_final as ai
 import pygame_interface
 
 
 if __name__ == '__main__':
+
+    # First, build a game tree from the csv file
+
+    list_of_games = gametree.read_moves_from_csv('game_tree_data.csv')
+    game_tree = gametree.build_game_tree_from_list(list_of_games)
 
     # Run the pygame interface.
     player1, player2 = pygame_interface.choose_players()
@@ -25,4 +31,4 @@ if __name__ == '__main__':
 
     # Print AI statistics. This part may take a while, so if you want to see
     # the statistics specifically, comment out the previous lines.
-    ai.print_ai_statistics()
+    ai.print_ai_statistics(game_tree)

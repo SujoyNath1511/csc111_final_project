@@ -34,7 +34,7 @@ class CheckersGameTree:
         - lost_black_pcs: The average number of pieces black could lose
         - subtrees: The subtrees of this tree.
     Representation Invariants:
-        - prev_move is a valid move
+        - move is a valid move
         - all(pos in checkers.VALID_POSITIONS for pos in prev_move)
         - 0 <= lost_white_pcs <= 6
         - 0 <= lost_black_pcs <= 6

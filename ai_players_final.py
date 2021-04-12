@@ -220,34 +220,53 @@ def helper_random_player(game: checkers_game.Checkers,
     return move
 
 
-def print_ai_statistics() -> None:
-    """Calculates the AI win rates and prints these statistics in the Python Console."""
-    list_of_games = gametree.read_moves_from_csv('game_tree_data.csv')
-    game_tree = gametree.build_game_tree_from_list(list_of_games)
+def print_ai_statistics(game_tree: gametree.CheckersGameTree) -> None:
+    """Calculates the AI win rates and prints these statistics in the Python Console.
+
+    The statistic being calculated is the percentage of games the Aggressive or Defensive
+    AI wins when playing against a random player out of 1000 games. This is run 10 times,
+    so there are 10 sets of 1000 games.
+    """
+    # Print a blank line for line spacing.
+    print('')
 
     # Statistics for Aggressive AI:
-    win_rates_aggro = []
-    for _ in range(0, 10):
+    for i in range(1, 6):
         stats = {'white': 0, 'black': 0, 'draw': 0}
         for _ in range(0, 1000):
             white = AggressivePlayer(game_tree)
             black = RandomPlayer()
             stats[checkers_game.run_game(white, black)[0]] += 1
-        win_rates_aggro.append(stats['white'] > stats['black'])
 
-    print(win_rates_aggro)
+        # Here, calculate the win percentage, but round it to two decimal places.
+        aggro_win_percentage = int((stats['white'] / 1000) * 10000) / 100
+        aggro_lose_percentage = int((stats['black'] / 1000) * 10000) / 100
+
+        # Print the statistics:
+        print(f'Aggressive Player Win rate for Set {i}: {aggro_win_percentage}')
+        print(f'Random Player Win rate for Set {i}: {aggro_lose_percentage}')
+        print('Aggressive Wins more than Random: ' + str(stats['white'] > stats['black']))
+        print('===============================================================')
+
+    # Print a blank line for line spacing.
+    print('')
 
     # Statistics for Defensive AI:
-    win_rates_defen = []
-    for _ in range(0, 10):
+    for j in range(1, 6):
         stats = {'white': 0, 'black': 0, 'draw': 0}
         for _ in range(0, 1000):
             white = DefensivePlayer(game_tree)
             black = RandomPlayer()
             stats[checkers_game.run_game(white, black)[0]] += 1
-        win_rates_defen.append(stats['white'] > stats['black'])
 
-    print(win_rates_defen)
+        defen_win_percentage = int((stats['white'] / 1000) * 10000) / 100
+        defen_lose_percentage = int((stats['black'] / 1000) * 10000) / 100
+
+        # Print the statistics:
+        print(f'Defensive Player Win rate for Set {j}: {defen_win_percentage}')
+        print(f'Random Player Win rate for Set {j}: {defen_lose_percentage}')
+        print('Defensive Wins more than Random: ' + str(stats['white'] > stats['black']))
+        print('===============================================================')
 
 
 if __name__ == '__main__':

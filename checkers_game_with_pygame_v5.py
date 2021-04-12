@@ -222,11 +222,11 @@ class Checkers:
         else:
             self.white_pieces.pop(position)
 
-    def get_neighbours(self, piece: Piece) -> list:
-        """Returns the pieces diagonal to the piece. The list contains tuples where the
-        of length two. If it is impossible for a piece to be diagonal, the tuple is empty.
-        The first index in the tuple says 'none' if there is no piece, 'same' if the
-        piece is the same colour, diff if the piece is a different colour. The second index contains
+    def get_neighbours(self, piece: Piece) -> List[tuple]:
+        """Returns the pieces diagonal to piece. The list contains tuples of length two if it is a
+        space on the board. If it is impossible for a piece to be diagonal, the tuple is empty.
+        The first index in the tuple says 'none' if there is no piece, 'same' if the piece is the
+        same colour, diff if the piece is a different colour. The second index contains
         the position"""
         position = piece.position
         # Gets the coordinates of the corners
@@ -259,12 +259,11 @@ class Checkers:
                     neighbours_so_far.append(('same', corners[i]))
         return neighbours_so_far
 
-    def get_valid_moves(self) -> List[tuple]:
+    def get_valid_moves(self) -> List[Tuple[str, str, str]]:
         """Returns all the valid moves for a player. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
-        position
-        """
+        position"""
 
         capture_moves = []
         non_capture_moves = []
@@ -283,8 +282,9 @@ class Checkers:
         else:
             return non_capture_moves
 
-    def get_valid_move_piece(self, piece) -> Tuple[list, bool]:
-        """Returns all the valid moves for a piece. The valid moves are stored as a tuple,
+    def get_valid_move_piece(self, piece) -> Tuple[List[Tuple[str, str, str]], bool]:
+        """Returns a tuple where the first index is a list of all the valid moves for a piece and
+        the second index is whether they are capture moves. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
         position"""
@@ -310,9 +310,12 @@ class Checkers:
             elif corner[0] == 'none':
                 non_capture_moves.append((piece.position, '', corner[1]))
             elif corner[0] == 'diff':
+                # Finds the letter of the piece's final position after a jump
                 letter = chr(ord(corner[1][0]) - ord(piece.position[0]) + ord(corner[1][0]))
+                # Finds the number of the piece's final position after a jump
                 num = str(int(corner[1][1]) - int(piece.position[1]) + int(corner[1][1]))
                 check = letter + num
+                # Checks to see if the position after jump is valid and empty
                 if check not in self.white_pieces and check not in self.black_pieces and \
                         check in VALID_POSITIONS:
                     capture_moves.append((piece.position, corner[1], check))

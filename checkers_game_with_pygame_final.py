@@ -458,10 +458,7 @@ def draw_crown(move: tuple[str, str, str], screen: pygame.Surface,
     pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
     left = OFFSET + y * RECT_SIZE
     top = OFFSET + x * RECT_SIZE
-    # points = [(left + 30, top + 10), (left + 50, top + 10), (left + 50, top + 30),
-    #           (left + 70, top + 30), (left + 70, top + 50), (left + 50, top + 50),
-    #           (left + 50, top + 70), (left + 30, top + 70), (left + 30, top + 50),
-    #           (left + 10, top + 50), (left + 10, top + 30), (left + 30, top + 30)]
+    
     points = [(left + 35, top + 10), (left + 60, top + 10), (left + 60, top + 35),
               (left + 85, top + 35), (left + 85, top + 60), (left + 60, top + 60),
               (left + 60, top + 85), (left + 35, top + 85), (left + 35, top + 60),
@@ -634,33 +631,12 @@ class HumanPlayer(Player):
                 event.pos) in game.black_pieces.keys()):
                 self.clicked = square_to_pos(event.pos)
 
-                # colors the square clicked
-                # if game.is_white_move:
-                #     color = 'white'
-                # else:
-                #     color = 'black'
-
-                # x, y = pos_to_square(self.clicked)
-                # rect = pygame.Rect((OFFSET + x * RECT_SIZE, OFFSET + y * RECT_SIZE),
-                #                    (RECT_SIZE, RECT_SIZE))
-                # pygame.draw.rect(game.screen, (207, 207, 132), rect, width=0)
-                #
-                # draw_piece(game.screen, square_to_pos(event.pos), color)
-                # pygame.display.update()
-
             if event.type == pygame.MOUSEBUTTONDOWN and self.clicked != '':
                 self.released = square_to_pos(event.pos)
                 if self.released != '':
                     other_piece = find_pieces_between(self.clicked, self.released, game)
                     move = (self.clicked, other_piece, self.released)
 
-                    # if game.is_white_move:
-                    #     piece = game.white_pieces[self.clicked]
-                    # else:
-                    #     piece = game.black_pieces[self.clicked]
-
-                    # if move in game.get_valid_move_piece(piece):
-                    # print(move in game.get_valid_moves())
                     if move in game.get_valid_moves():
                         return move
                     else:

@@ -11,10 +11,10 @@ Deb Nath. Any other forms of distribution of this code is strictly prohibited wi
 permission of the aforementioned group.
 This file is Copyright (c) 2021 Sujoy Deb Nath, Benjamin Lee, Mohamed Abdullahi and Eren Findik.
 """
-import checkers_game_with_pygame_v5 as c_game
+import checkers_game_with_pygame_final as c_game
 import checkers_game_tree_final as gametree
 import ai_players_final as ai
-import pygame_interface
+import pygame_interface_final as pygame_interface
 
 
 if __name__ == '__main__':
@@ -25,9 +25,11 @@ if __name__ == '__main__':
     game_tree = gametree.build_game_tree_from_list(list_of_games)
 
     # Run the pygame interface.
-    player1, player2 = pygame_interface.choose_players()
-    game = c_game.run_game_pygame(player1, player2)
-    print('The winner:' + game[0])
+    players = pygame_interface.choose_players(game_tree)
+    if players is not None:
+        player1, player2 = players
+        game = c_game.run_game_pygame(player1, player2)
+        print('The winner:' + game[0])
 
     # Print AI statistics. This part may take a while, so if you want to see
     # the statistics specifically, comment out the previous lines.

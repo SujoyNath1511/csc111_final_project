@@ -18,7 +18,7 @@ from typing import Optional
 import random
 import csv
 # May be subject to change later
-from checkers_game_with_pygame_v5 import Player, Checkers, run_game
+from checkers_game_with_pygame_final import Player, Checkers, run_game
 
 START_MOVE = ('', '', '')
 STARTING_PLAYER = True
@@ -34,7 +34,7 @@ class CheckersGameTree:
         - lost_black_pcs: The average number of pieces black could lose
         - subtrees: The subtrees of this tree.
     Representation Invariants:
-        - move is a valid move
+        - prev_move is a valid move
         - all(pos in checkers.VALID_POSITIONS for pos in prev_move)
         - 0 <= lost_white_pcs <= 6
         - 0 <= lost_black_pcs <= 6

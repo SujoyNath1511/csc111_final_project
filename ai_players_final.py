@@ -1,9 +1,7 @@
 """
 CSC111 Winter 2021 Final Project: Building A Checkers AI Player
-
 This Python module contains the subclasses for the AI players and the random player. It also
 contains the function for getting the statistics of the AI players' performance.
-
 ======================================
 This file is provided solely for the use of the CSC111 Teaching team and for the
 use of people who made this file, Mohamed Abdullahi, Benjamin Lee, Eren Findik and Sujoy
@@ -15,7 +13,7 @@ from __future__ import annotations
 import random
 from typing import Optional
 import checkers_game_tree_final as gametree
-import checkers_game_with_pygame_v5 as checkers_game
+import checkers_game_with_pygame_final as checkers_game
 
 
 class AggressivePlayer(checkers_game.Player):

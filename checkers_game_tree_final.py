@@ -207,17 +207,21 @@ class ExploringPlayer(Player):
                   continuing_from_previous_move: bool) -> tuple[str, str, str]:
         """Makes a move that is not in the game_tree. If all valid moves are in the game tree,
         it makes a random move."""
+        # If previous_move is None, then no move has been made in the game
         if self.game_tree is not None and previous_move != ('', '', ''):
             self.game_tree = self.game_tree.find_subtree_by_move(previous_move)
+        # If it is continuing from a previous move for white, get the valid moves for the piece
         if continuing_from_previous_move and game.is_white_move:
             valid_moves = game.get_valid_move_piece(game.white_pieces[previous_move[2]])[0]
         elif continuing_from_previous_move:
             valid_moves = game.get_valid_move_piece(game.black_pieces[previous_move[2]])[0]
         else:
             valid_moves = game.get_valid_moves()
+        # No moves are in the game tree, so any move can be picked
         if self.game_tree is None:
             return random.choice(valid_moves)
         else:
+            # Find the moves not in the game tree
             moves_not_in_game_tree = []
             for move in valid_moves:
                 for subtree in self.game_tree.subtrees:

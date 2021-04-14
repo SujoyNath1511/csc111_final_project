@@ -284,8 +284,8 @@ class Checkers:
             pieces_to_check = [self.white_pieces[piece] for piece in self.white_pieces]
         else:
             pieces_to_check = [self.black_pieces[piece] for piece in self.black_pieces]
-        for piece in pieces_to_check:
-            moves, is_capture = self.get_valid_move_piece(piece)
+        for piece_to_check in pieces_to_check:
+            moves, is_capture = self.get_valid_move_piece(piece_to_check)
             if is_capture:
                 capture_moves.extend(moves)
             else:

@@ -18,19 +18,24 @@ import pygame_interface_final as pygame_interface
 
 
 if __name__ == '__main__':
-
+    ##################################################################
     # First, build a game tree from the csv file
-
+    ##################################################################
     list_of_games = gametree.read_moves_from_csv('game_tree_data.csv')
     game_tree = gametree.build_game_tree_from_list(list_of_games)
 
-    # Run the pygame interface.
+    ##################################################################
+    # Run the pygame interface. You can comment out this part to not
+    # run the pygame.
+    ##################################################################
     players = pygame_interface.choose_players(game_tree)
     if players is not None:
         player1, player2 = players
         game = c_game.run_game_pygame(player1, player2)
         print('The winner:' + game[0])
 
+    ##################################################################
     # Print AI statistics. This part may take a while, so if you want to see
     # the statistics specifically, comment out the previous lines.
+    ##################################################################
     ai.print_ai_statistics(game_tree)

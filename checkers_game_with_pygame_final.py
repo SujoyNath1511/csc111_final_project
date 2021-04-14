@@ -24,7 +24,7 @@ VALID_POSITIONS = [letter + str(2 * x) for x in range(1, 4) for letter in 'ace']
                   [letter + str(2 * x + 1) for x in range(0, 3) for letter in 'bdf']
 PLAYER_COLORS = ('white', 'black')
 
-MOVE_LIMIT = 35
+MOVE_LIMIT = 60
 PLAYER_TYPES = ['Random Player', 'Aggressive Player', 'Defensive Player', 'Human Player']
 
 
@@ -53,10 +53,10 @@ class Piece:
     self can now move in all diagonal adjacent squares.
     """
         if self.white is True:
-            if self.position in ['b1', 'd1', 'f1']:
+            if self.position in ['b1', 'd1', 'f1']:     # The top end of the board
                 self.is_crowned = True
         else:
-            if self.position in ['a6', 'c6', 'e6']:
+            if self.position in ['a6', 'c6', 'e6']:     # The bottom end of the board
                 self.is_crowned = True
 
 
@@ -66,6 +66,8 @@ class Checkers:
       - white_pieces: A dictionary mapping positions of the white pieces to the pieces themselves.
       - black_pieces: A dictionary mapping positions of the black pieces to the pieces themselves.
       - is_white_move: Whether white is the current player.
+      - screen: An optional pygame Surface object that represents the pygame window.
+
   Representation Invariants:
       - all(pos == self.white_pieces[pos].position for pos in self.white_pieces)
       - all(pos == self.black_pieces[pos].position for pos in self.black_pieces)
@@ -75,7 +77,7 @@ class Checkers:
     white_pieces: Dict[str, Piece]
     black_pieces: Dict[str, Piece]
     is_white_move: bool
-    screen: pygame.Surface
+    screen: Optional[pygame.Surface] = None
 
     def __init__(self, white: Optional[Dict[str, Piece]] = None,
                  black: Optional[Dict[str, Piece]] = None,
@@ -98,19 +100,26 @@ class Checkers:
 
     def set_screen(self, screen: pygame.Surface) -> None:
         """
-        Sets the ..
+        Sets self.screen to screen, the pygame Surface object representing the pygame
+        window.
         """
         self.screen = screen
 
     def get_winner(self, move_count) -> Optional[str]:
         """Return the winner of the game, if there is one or if it is a draw.
-    Return None if the move limit has not been reached and there is no winner yet.
-    """
+        Return None if the move limit has not been reached and there is no winner yet.
+
+        Preconditions:
+            - 0 <= move_count <= MOVE_LIMIT
+        """
         if len(self.black_pieces) == 0:
+            # There are no black pieces left on the board.
             return 'white'
         elif len(self.white_pieces) == 0:
+            # There are no white pieces left on the board.
             return 'black'
         elif move_count == MOVE_LIMIT or self.get_valid_moves() == []:
+            # The move limit has been reached, or a player can't make any moves.
             return 'draw'
         else:
             return None
@@ -122,6 +131,7 @@ class Checkers:
         The second element is the position of the piece that was jumped over/captured.
         (Can be an empty string if no capture was made.)
         The third element is the final position of the piece.
+
         Preconditions:
             - move[2] not in self.white_pieces or move[2] not in self.black_pieces
         """
@@ -140,6 +150,9 @@ class Checkers:
 
     def make_move_pygame(self, move: tuple[str, str, str], screen) -> None:
         """
+        This is the make_move method, but with pygame methods added on inorder
+        to visualize a move being made.
+
         Makes a move based on the tuple, move.
         The first element of the tuple is the initial position of the game piece
         The second element is the position of the piece that was jumped over/captured.
@@ -211,7 +224,7 @@ class Checkers:
 
     def capture(self, position: str) -> None:
         """
-        removes the piece that is on the given position from the game
+        Removes the piece that is on the given position from the game board.
         """
         if self.is_white_move:
             self.black_pieces.pop(position)
@@ -223,7 +236,11 @@ class Checkers:
         space on the board. If it is impossible for a piece to be diagonal, the tuple is empty.
         The first index in the tuple says 'none' if there is no piece, 'same' if the piece is the
         same colour, diff if the piece is a different colour. The second index contains
-        the position"""
+        the position
+
+        Preconditions:
+            - (piece in self.black_pieces) or (piece in self.white_pieces)
+        """
         position = piece.position
         # Gets the coordinates of the corners
         top_right = chr(ord(position[0]) + 1) + str(int(position[1]) + 1)
@@ -283,7 +300,11 @@ class Checkers:
         the second index is whether they are capture moves. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
-        position"""
+        position.
+
+        Preconditions:
+            - (piece in self.black_pieces) or (piece in self.white_pieces)
+        """
         capture_moves = []
         non_capture_moves = []
         corners = self.get_neighbours(piece)
@@ -319,6 +340,7 @@ class Checkers:
             return (capture_moves, True)
         else:
             return (non_capture_moves, False)
+
 
 class Player:
     """
@@ -453,7 +475,7 @@ def draw_crown(move: tuple[str, str, str], screen: pygame.Surface,
     pygame.draw.rect(screen, (84, 84, 84), rect2, width=0)
     left = OFFSET + y * RECT_SIZE
     top = OFFSET + x * RECT_SIZE
-    
+
     points = [(left + 35, top + 10), (left + 60, top + 10), (left + 60, top + 35),
               (left + 85, top + 35), (left + 85, top + 60), (left + 60, top + 60),
               (left + 60, top + 85), (left + 35, top + 85), (left + 35, top + 60),

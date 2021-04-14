@@ -75,8 +75,8 @@ class CheckersGameTree:
 
     def update_lost_pcs(self) -> None:
         """Updates the self.lost_black_pcs and self.lost_white_pcs.
+
         Preconditions:
-            - self.is_empty() is False
             - self.subtrees != []
         """
         if self.is_white is True:
@@ -119,7 +119,7 @@ class CheckersGameTree:
         the current move being inserted (the root move of the tree).
 
         Preconditions:
-            - 0 <= i < len(move_list)
+            - 0 <= i <= len(move_list)
             - The last element in move_list represents the last move made in the game.
             - All moves in move_list are valid moves.
         """
@@ -198,7 +198,7 @@ class ExploringPlayer(Player):
     Instance Attribute:
         - _game_tree: The game tree that ExploringPlayer uses to make moves
     """
-    game_tree: CheckersGameTree
+    game_tree: Optional[CheckersGameTree] = None
 
     def __init__(self, game_tree: CheckersGameTree) -> None:
         self.game_tree = game_tree
@@ -425,7 +425,7 @@ if __name__ == '__main__':
     import python_ta
     python_ta.check_all(config={
         'extra-imports': ["__future__", "typing", "random",
-                          "csv", "checkers_game_with_pygame_v5"],
+                          "csv", "checkers_game_with_pygame_final"],
         'allowed-io': ['read_moves_from_csv', 'write_moves_to_csv'],
         'max-nested-blocks': 5,
         'max-line-length': 100,

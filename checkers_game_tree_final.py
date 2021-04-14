@@ -363,10 +363,17 @@ def build_game_tree_from_list(list_of_games: list[list[tuple[bool, tuple[str, st
 
     return game_tree
 
-def compare_move_sequence_to_game_tree(game_tree: CheckersGameTree, move_sequence: list,
-                                       i: int) -> bool:
+
+def compare_move_sequence_game_tree(game_tree: CheckersGameTree,
+                                    move_sequence: list[tuple[bool, tuple[str, str, str]]],
+                                    i: int) -> bool:
     """Makes a list of move sequences based on the game tree. Move sequences are a lists of valid
-     moves played in a game. Used to test whether moves are valid"""
+     moves played in a game. Used to test whether moves are valid.
+
+     Preconditions:
+        - 0 <= i < len(move_sequence)
+        - move_sequence != []
+     """
 
     if i == len(move_sequence) - 1:
         # Since move_sequence from exploring_player_runner also returns a bool in the list, we need
@@ -374,74 +381,19 @@ def compare_move_sequence_to_game_tree(game_tree: CheckersGameTree, move_sequenc
         return game_tree.move == move_sequence[i][1]
     elif game_tree.move == ('', '', ''):
         for subtree in game_tree.subtrees:
-            if compare_move_sequence_to_game_tree(subtree, move_sequence, i):
+            if compare_move_sequence_game_tree(subtree, move_sequence, i):
                 return True
         return False
     elif game_tree.move != move_sequence[i][1]:
         return False
     else:
         for subtree in game_tree.subtrees:
-            if compare_move_sequence_to_game_tree(subtree, move_sequence, i + 1):
+            if compare_move_sequence_game_tree(subtree, move_sequence, i + 1):
                 return True
         return False
 
-    
+
 if __name__ == '__main__':
-    # # Draw
-    # moves = [(True, ('d5', '', 'c4')), (False, ('c2', '', 'd3')), (True, ('e6', '', 'd5')),
-    #          (False, ('e2', '', 'f3')), (True, ('c4', 'd3', 'e2')), (False, ('f1', 'e2', 'd3')),
-    #          (True, ('f5', '', 'e4')), (False, ('d3', 'e4', 'f5')), (True, ('d5', '', 'e4')),
-    #          (False, ('f3', 'e4', 'd5')), (True, ('c6', 'd5', 'e4')), (False, ('a2', '', 'b3')),
-    #          (True, ('b5', '', 'a4')), (False, ('d1', '', 'e2')), (True, ('a4', 'b3', 'c2')),
-    #          (False, ('b1', 'c2', 'd3')), (True, ('e4', 'd3', 'c2')), (False, ('f5', '', 'e6')),
-    #          (True, ('c2', '', 'd1')), (False, ('e2', '', 'd3')), (True, ('d1', '', 'e2')),
-    #          (False, ('d3', '', 'e4')), (True, ('e2', '', 'd3')), (False, ('e6', '', 'f5')),
-    #          (True, ('a6', '', 'b5')), (False, ('f5', '', 'e6')), (True, ('d3', 'e4', 'f5')),
-    #          (False, ('e6', '', 'd5')), (True, ('b5', '', 'c4')), (False, ('d5', 'c4', 'b3')),
-    #          (True, ('f5', '', 'e6')), (False, ('b3', '', 'c2')), (True, ('e6', '', 'f5')),
-    #          (False, ('c2', '', 'b1')), (True, ('f5', '', 'e4'))]
-    #
-    # # White Wins
-    # moves_2 = [(True, ('f5', '', 'e4')), (False, ('e2', '', 'd3')), (True, ('b5', '', 'c4')),
-    #            (False, ('d3', 'c4', 'b5')), (True, ('c6', 'b5', 'a4')), (False, ('c2', '', 'd3')),
-    #            (True, ('e4', 'd3', 'c2')), (False, ('b1', 'c2', 'd3')), (True, ('a6', '', 'b5')),
-    #            (False, ('d3', '', 'c4')), (True, ('b5', 'c4', 'd3')), (False, ('f1', '', 'e2')),
-    #            (True, ('d3', 'e2', 'f1')), (False, ('d1', '', 'c2')), (True, ('e6', '', 'f5')),
-    #            (False, ('c2', '', 'd3')), (True, ('d5', '', 'c4')), (False, ('d3', 'c4', 'b5')),
-    #            (True, ('f5', '', 'e4')), (False, ('a2', '', 'b3')), (True, ('a4', 'b3', 'c2')),
-    #            (False, ('b5', '', 'c6')), (True, ('e4', '', 'f3')), (False, ('c6', '', 'b5')),
-    #            (True, ('f3', '', 'e2')), (False, ('b5', '', 'c4')), (True, ('e2', '', 'd1')),
-    #            (False, ('c4', '', 'd5')), (True, ('d1', '', 'e2')), (False, ('d5', '', 'c4')),
-    #            (True, ('e2', '', 'd3')), (False, ('c4', 'd3', 'e2')), (True, ('f1', 'e2', 'd3'))]
-    #
-    # # Black Wins
-    # moves_3 = [(True, ('d5', '', 'c4')), (False, ('c2', '', 'd3')), (True, ('c4', '', 'b3')),
-    #            (False, ('a2', 'b3', 'c4')), (True, ('b5', '', 'a4')), (False, ('c4', '', 'b5')),
-    #            (True, ('a6', 'b5', 'c4')), (False, ('d3', 'c4', 'b5')), (True, ('a4', '', 'b3')),
-    #            (False, ('e2', '', 'd3')), (True, ('c6', 'b5', 'a4')), (False, ('f1', '', 'e2')),
-    #            (True, ('e6', '', 'd5')), (False, ('d3', '', 'c4')), (True, ('d5', '', 'e4')),
-    #            (False, ('e2', '', 'd3')), (True, ('e4', 'd3', 'c2')), (False, ('b1', 'c2', 'd3')),
-    #            (True, ('f5', '', 'e4')), (False, ('d3', 'e4', 'f5')), (True, ('b3', '', 'c2')),
-    #            (False, ('d1', 'c2', 'b3')), (True, ('a4', 'b3', 'c2')), (False, ('c4', '', 'd5')),
-    #            (True, ('c2', '', 'b1')), (False, ('d5', '', 'e6')), (True, ('b1', '', 'a2')),
-    #            (False, ('e6', '', 'd5')), (True, ('a2', '', 'b3')), (False, ('f5', '', 'e6')),
-    #            (True, ('b3', '', 'a4')), (False, ('d5', '', 'c4')), (True, ('a4', '', 'b3')),
-    #            (False, ('c4', 'b3', 'a2'))]
-    #
-    # test_tree = CheckersGameTree(STARTING_PLAYER, START_MOVE)
-    # test_tree.insert_move_sequence(moves, 0)
-    # test_tree.insert_move_sequence(moves_2, 0)
-    # test_tree.insert_move_sequence(moves_3, 0)
-    # print(test_tree)
-    #
-    # # Test Case 2:
-    # tree, move_lists = exploring_player_runner(10)
-    # print(move_lists)
-    # write_moves_to_csv('data/test_csv.csv', move_lists)
-    # move_lists_2 = read_moves_from_csv('data/test_csv.csv')
-    # print(move_lists_2)
-    # # Need to clear the test_csv.csv file before running this assert.
-    # assert move_lists_2 == move_lists
     import doctest
     doctest.testmod()
     import python_ta

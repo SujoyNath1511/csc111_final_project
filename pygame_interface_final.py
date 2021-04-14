@@ -1,5 +1,8 @@
 """CSC111 Winter 2021 Final Project: Building A Checkers AI Player
-This is the file that handles the pygame interface of the project.
+
+This is the file that handles the pygame interface of the project. This includes the menu
+and the ability to look back at previous moves.
+
 Copyright and Usage Information:
 ======================================
 This file is provided solely for the use of the CSC111 Teaching team and for the

@@ -40,4 +40,4 @@ if __name__ == '__main__':
     # Print AI statistics. This part may take a while, so if you want to see
     # the statistics specifically, comment out the previous lines.
     ##################################################################
-    ai.print_ai_statistics(game_tree)
+    # ai.print_ai_statistics(game_tree)

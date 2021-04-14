@@ -1,6 +1,10 @@
 """
 CSC111 Winter 2021 Final Project: Building A Checkers AI Player
-... (Description goes here.)
+
+This file contains the main Checkers class, Piece class, and all related functions and methods
+used to run Checkers in Python. This file also contains the functions used to visualize
+Checkers using Pygame and the abstract Player class and HumanPlayer subclass.
+
 Copyright and Usage Information:
 ======================================
 This file is provided solely for the use of the CSC111 Teaching team and for the
@@ -398,11 +402,16 @@ def run_game(white: Player, black: Player) -> tuple[str, list[tuple[bool, tuple[
 
     return (game_board.get_winner(len(moves_so_far)), moves_so_far)
 
+#####################################################################################
+# This section below handles the visualization of Checkers using Pygame and
+# the HumanPlayer class.
+#####################################################################################
+
 
 def run_game_pygame(white: Player, black: Player) -> tuple[str, list]:
     """
     Works exactly as run_game but it also uses pygame to show the moves made. Returns a tuple which
-    includes the winner as str and moves as a list
+    includes the winner as str and moves as a list.
     """
 
     game_board = Checkers()

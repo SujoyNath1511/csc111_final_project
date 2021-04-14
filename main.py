@@ -32,8 +32,9 @@ if __name__ == '__main__':
     if players is not None:
         player1, player2 = players
         game = c_game.run_game_pygame(player1, player2)
-        print('The winner:' + game[0])
-        pygame_interface.look_back_to_moves(game[1])
+        if game is not None:
+            print('The winner:' + game[0])
+            pygame_interface.look_back_to_moves(game[1])
 
     ##################################################################
     # Print AI statistics. This part may take a while, so if you want to see

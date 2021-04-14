@@ -363,7 +363,29 @@ def build_game_tree_from_list(list_of_games: list[list[tuple[bool, tuple[str, st
 
     return game_tree
 
+def compare_move_sequence_to_game_tree(game_tree: CheckersGameTree, move_sequence: list,
+                                       i: int) -> bool:
+    """Makes a list of move sequences based on the game tree. Move sequences are a lists of valid
+     moves played in a game. Used to test whether moves are valid"""
 
+    if i == len(move_sequence) - 1:
+        # Since move_sequence from exploring_player_runner also returns a bool in the list, we need
+        # to exclude that
+        return game_tree.move == move_sequence[i][1]
+    elif game_tree.move == ('', '', ''):
+        for subtree in game_tree.subtrees:
+            if compare_move_sequence_to_game_tree(subtree, move_sequence, i):
+                return True
+        return False
+    elif game_tree.move != move_sequence[i][1]:
+        return False
+    else:
+        for subtree in game_tree.subtrees:
+            if compare_move_sequence_to_game_tree(subtree, move_sequence, i + 1):
+                return True
+        return False
+
+    
 if __name__ == '__main__':
     # # Draw
     # moves = [(True, ('d5', '', 'c4')), (False, ('c2', '', 'd3')), (True, ('e6', '', 'd5')),

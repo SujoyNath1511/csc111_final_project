@@ -24,8 +24,8 @@ RECT_SIZE = 100
 OFFSET = 100
 START_POS_BLACK = {'a2', 'b1', 'c2', 'd1', 'e2', 'f1'}
 START_POS_WHITE = {'a6', 'b5', 'c6', 'd5', 'e6', 'f5'}
-VALID_POSITIONS = [letter + str(2 * x) for x in range(1, 4) for letter in 'ace'] + \
-                  [letter + str(2 * x + 1) for x in range(0, 3) for letter in 'bdf']
+VALID_POSITIONS = ['a2', 'c2', 'e2', 'a4', 'c4', 'e4', 'a6', 'c6', 'e6', 'b1', 'd1', 'f1', 'b3',
+                   'd3', 'f3', 'b5', 'd5', 'f5']
 PLAYER_COLORS = ('white', 'black')
 
 MOVE_LIMIT = 60
@@ -66,17 +66,21 @@ class Piece:
 
 class Checkers:
     """A class that represents the game checkers.
-  Instance Attributes:
-      - white_pieces: A dictionary mapping positions of the white pieces to the pieces themselves.
-      - black_pieces: A dictionary mapping positions of the black pieces to the pieces themselves.
-      - is_white_move: Whether white is the current player.
-      - screen: An optional pygame Surface object that represents the pygame window.
-  Representation Invariants:
-      - all(pos == self.white_pieces[pos].position for pos in self.white_pieces)
-      - all(pos == self.black_pieces[pos].position for pos in self.black_pieces)
-      - 0 <= len(self.white_pieces) <= 6
-      - 0 <= len(self.black_pieces) <= 6
-  """
+
+    Instance Attributes:
+          - white_pieces: A dictionary mapping positions of the white pieces to the pieces
+          themselves.
+          - black_pieces: A dictionary mapping positions of the black pieces to the pieces
+          themselves.
+          - is_white_move: Whether white is the current player.
+          - screen: An optional pygame Surface object that represents the pygame window.
+
+    Representation Invariants:
+          - all(pos == self.white_pieces[pos].position for pos in self.white_pieces)
+          - all(pos == self.black_pieces[pos].position for pos in self.black_pieces)
+          - 0 <= len(self.white_pieces) <= 6
+          - 0 <= len(self.black_pieces) <= 6
+    """
     white_pieces: Dict[str, Piece]
     black_pieces: Dict[str, Piece]
     is_white_move: bool
@@ -125,6 +129,7 @@ class Checkers:
         The second element is the position of the piece that was jumped over/captured.
         (Can be an empty string if no capture was made.)
         The third element is the final position of the piece.
+
         Preconditions:
             - move[2] not in self.white_pieces or move[2] not in self.black_pieces
         """
@@ -150,6 +155,7 @@ class Checkers:
         The second element is the position of the piece that was jumped over/captured.
         (Can be an empty string if no capture was made.)
         The third element is the final position of the piece.
+
         Preconditions:
             - move[2] not in self.white_pieces or move[2] not in self.black_pieces
         """
@@ -228,7 +234,8 @@ class Checkers:
         space on the board. If it is impossible for a piece to be diagonal, the tuple is empty.
         The first index in the tuple says 'none' if there is no piece, 'same' if the piece is the
         same colour, diff if the piece is a different colour. The second index contains
-        the position
+        the position.
+
         Preconditions:
             - (piece in self.black_pieces) or (piece in self.white_pieces)
         """
@@ -266,7 +273,8 @@ class Checkers:
         """Returns all the valid moves for a player. The valid moves are stored as a tuple,
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
-        position"""
+        position.
+        """
 
         capture_moves = []
         non_capture_moves = []
@@ -291,6 +299,7 @@ class Checkers:
         where the first index is the initial position, the second is empty if no capture is made
         otherwise, it contains the position of the piece captured, and the third is the final
         position.
+
         Preconditions:
             - (piece in self.black_pieces) or (piece in self.white_pieces)
         """
@@ -341,6 +350,7 @@ class Player:
                   continuing_from_previous_move: bool) -> tuple[str, str, str]:
         """
         Make a move based on the given checkers game
+
         Preconditions:
             - There should at least be one valid moves.
         """
@@ -568,7 +578,7 @@ def draw_piece(screen: pygame.Surface, pos: str, color: str) -> None:
     Draws a checkers piece in the given board and position with given color
 
     Representation Invariants:
-    - color in {'black', 'white'}
+        - color in {'black', 'white'}
     """
 
     if color == 'black':
@@ -667,8 +677,8 @@ class HumanPlayer(Player):
     A player that is run by a human from the pygame interface
 
     Instance Attributes:
-    -clicked: the square of the piece that is gonna be moved
-    -released: the new position of the piece chosen
+        - clicked: the square of the piece that is gonna be moved
+        - released: the new position of the piece chosen
     """
     clicked: str
     released: str
@@ -700,12 +710,9 @@ class HumanPlayer(Player):
                     other_piece = find_pieces_between(self.clicked, self.released, game)
                     move = (self.clicked, other_piece, self.released)
 
-                    # If the move is valid it is returned, else everything is reset
+                    # If the move is valid it is returned
                     if move in game.get_valid_moves():
                         return move
-                    else:
-                        self.clicked: ''
-                        self.released: ''
 
 
 def draw_moves(moves: list, screen: pygame.Surface) -> Checkers:

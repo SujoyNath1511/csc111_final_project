@@ -127,10 +127,11 @@ def draw_choose_players(screen: pygame.Surface) -> None:
     rect1 = pygame.Rect((5 * OFFSET, OFFSET), (rect_width + 1, rect_height + 1))
     pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)
 
-    # Draws the rectengle writing 'Information' on it
+    # Draws the rectengle writing 'Run AI Statistics' on it
     rect1 = pygame.Rect((5 * OFFSET, OFFSET + rect_height), (rect_width, rect_height))
     pygame.draw.rect(screen, (148, 126, 193), rect1, width=0)
-    checkers_pygame.draw_text(screen, ' Information', (5 * OFFSET, OFFSET + 4 * rect_height // 3),
+    checkers_pygame.draw_text(screen, ' Run AI Statistics',
+                              (5 * OFFSET, OFFSET + 4 * rect_height // 3),
                               26)
     rect1 = pygame.Rect((5 * OFFSET, OFFSET + rect_height), (rect_width + 1, rect_height + 1))
     pygame.draw.rect(screen, (0, 0, 0), rect1, width=1)

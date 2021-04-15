@@ -73,7 +73,6 @@ class Checkers:
           - black_pieces: A dictionary mapping positions of the black pieces to the pieces
           themselves.
           - is_white_move: Whether white is the current player.
-          - screen: An optional pygame Surface object that represents the pygame window.
 
     Representation Invariants:
           - all(pos == self.white_pieces[pos].position for pos in self.white_pieces)

@@ -169,12 +169,16 @@ class CheckersGameTree:
 
     def __str__(self) -> str:
         """Return a string representation of this tree.
+        
+        This code is borrowed from A2.
         """
         return self._str_indented(0)
 
     def _str_indented(self, depth: int) -> str:
         """Return an indented string representation of this tree.
         The indentation level is specified by the <depth> parameter.
+        
+        This code is borrowed and modified from A2.
         """
         if self.is_white:
             turn_desc = "White's move"

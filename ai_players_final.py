@@ -230,6 +230,25 @@ def print_ai_statistics(game_tree: gametree.CheckersGameTree) -> None:
     # Print a blank line for line spacing.
     print('')
 
+    # Statistics for Defensive AI:
+    for j in range(1, 6):
+        stats = {'white': 0, 'black': 0, 'draw': 0}
+        for _ in range(0, 1000):
+            white = RandomPlayer()
+            black = RandomPlayer()
+            stats[checkers_game.run_game(white, black)[0]] += 1
+
+        ran1_win_percentage = int((stats['white'] / 1000) * 10000) / 100
+        ran2_lose_percentage = int((stats['black'] / 1000) * 10000) / 100
+
+        # Print the statistics:
+        print(f'Random Player 1 Win rate for Set {j}: {ran1_win_percentage}')
+        print(f'Random Player 2 Win rate for Set {j}: {ran2_lose_percentage}')
+        print('Random 1 Wins more than Random 2: ' + str(stats['white'] > stats['black']))
+        print('===============================================================')
+
+    print('')
+
     # Statistics for Aggressive AI:
     for i in range(1, 6):
         stats = {'white': 0, 'black': 0, 'draw': 0}
